@@ -216,7 +216,7 @@ function recipeCardHTML(r) {
         <span>📊 ${r.difficulty}</span>
       </div>
       <div class="recipe-card-footer">
-        <span class="rc-author">By ${r.author || 'NutriDish'}</span>
+        <span class="rc-author">By ${r.author || 'Nutriglow'}</span>
         <div class="rc-actions">
           <button class="icon-btn ${isLiked ? 'is-liked' : ''}" onclick="event.stopPropagation();toggleLike(${r.id})">
             ${isLiked ? '❤️' : '🤍'} ${likes}
