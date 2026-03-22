@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriDish — Dietary Recipe Finder</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Dancing+Script:wght@700&display=swap"
+    rel="stylesheet" />
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
+  <nav id="navbar">
+    <div class="nav-logo" onclick="showPage('home')">
+      <span class="logo-leaf">🌿</span><span class="logo-nutri">Nutri</span><span class="logo-dish">Dish</span>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <button class="nav-btn active" data-page="home" onclick="showPage('home');setNavActive(this)">Home</button>
+      <button class="nav-btn" data-page="diets" onclick="showPage('diets');setNavActive(this)">Diets</button>
+      <button class="nav-btn" onclick="requireAuth('planner');setNavActive(this)">Planner</button>
+      <button class="nav-btn" onclick="requireAuth('post');setNavActive(this)">Post Recipe</button>
+      <button class="nav-btn" onclick="requireAuth('profile');setNavActive(this)">My Profile</button>
+    <button class="nav-btn" id="navAdminBtn" style="display:none" onclick="showPage('admin');setNavActive(this)">Admin</button>
+    </div>
+    <div class="nav-auth" id="navAuth">
+      <button class="btn-outline" onclick="openModal('loginModal')">Login</button>
+      <button class="btn-fill" onclick="openModal('registerModal')">Sign Up</button>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">☰</button>
+  </nav>
+
+  <!-- ═══════════════════════════ TOAST ═══════════════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════════════════ HOME PAGE ═══════════════════════════ -->
+  <div class="page active" id="page-home">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-badge">🌱 Eat Smart · Live Better</span>
+        <h1>Discover Recipes<br>For Your <em>Lifestyle</em></h1>
+        <p>Explore hundreds of healthy, delicious recipes crafted for every dietary need — from vegan to keto, and
+          everything in between.</p>
+        <div class="hero-search-wrap">
+          <input type="text" id="heroSearch" placeholder="Search recipes, ingredients, diets..."
+            onkeydown="if(event.key==='Enter')doSearch()" />
+          <button onclick="doSearch()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            Search
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="hstat"><span class="hstat-n">11</span><span class="hstat-l">Diet Types</span></div>
+          <div class="hstat-div"></div>
+          <div class="hstat"><span class="hstat-n">80+</span><span class="hstat-l">Recipes</span></div>
+          <div class="hstat-div"></div>
+          <div class="hstat"><span class="hstat-n">100%</span><span class="hstat-l">Healthy</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIET CARDS -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Browse By Diet</h2>
+        <p class="section-sub">Choose your dietary preference to explore curated recipes</p>
+      </div>
+      <div class="diet-grid" id="homeDietGrid"></div>
+    </section>
+
+    <!-- FEATURED RECIPES -->
+    <section class="section bg-cream">
+      <div class="section-head">
+        <h2 class="section-title">Featured Recipes</h2>
+        <p class="section-sub">Hand-picked delicious meals for every occasion</p>
+      </div>
+      <div class="recipe-grid" id="featuredGrid"></div>
+    </section>
+
+  </div>
+
+  <!-- ═══════════════════════════ DIETS PAGE ═══════════════════════════ -->
+  <div class="page" id="page-diets">
+    <div class="section">
+      <div class="section-head">
+        <h2 class="section-title">All Diet Categories</h2>
+        <p class="section-sub">Explore all our curated dietary plans</p>
+      </div>
+      <div class="diet-grid" id="allDietGrid"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ RECIPES PAGE ═══════════════════════════ -->
+  <div class="page" id="page-recipes">
+    <div class="section">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">🏠 Home</a>
+        <span class="bc-sep">›</span>
+        <a onclick="showPage('diets')">Diets</a>
+        <span class="bc-sep">›</span>
+        <span id="rcBreadcrumb">Recipes</span>
+      </div>
+      <div class="diet-banner" id="dietBanner"></div>
+      <div class="filter-bar" id="filterBar"></div>
+      <div class="recipe-grid" id="recipesGrid"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ RECIPE DETAIL ═══════════════════════════ -->
+  <div class="page" id="page-detail">
+    <div id="detailHero" class="detail-hero"></div>
+    <div class="detail-body" id="detailBody"></div>
+  </div>
+
+  <!-- ═══════════════════════════ SEARCH PAGE ═══════════════════════════ -->
+  <div class="page" id="page-search">
+    <div class="section">
+      <div class="breadcrumb"><a onclick="showPage('home')">🏠 Home</a><span class="bc-sep">›</span><span>Search
+          Results</span></div>
+      <h2 class="section-title">Search Results</h2>
+      <p class="section-sub" id="searchInfo"></p>
+      <div class="recipe-grid" id="searchGrid"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ POST RECIPE PAGE ═══════════════════════════ -->
+  <div class="page" id="page-post">
+    <div class="post-wrap">
+      <div class="post-header">
+        <h1>🍳 Share Your Recipe</h1>
+        <p>Inspire the community with your culinary creation</p>
+      </div>
+      <div class="post-card">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Recipe Name *</label>
+            <input class="form-input" id="postName" placeholder="e.g. Mango Avocado Salad" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Upload Image</label>
+            <input type="file" class="form-input" id="postImgFile" accept="image/*" onchange="handleImageUpload(event)" />
+          </div>
+        </div>
+        <div class="post-img-preview" id="postImgPreview"></div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Diet Category *</label>
+            <select class="form-input" id="postDiet"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cook Time</label>
+            <input class="form-input" id="postTime" placeholder="e.g. 30 min" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Difficulty</label>
+            <select class="form-input" id="postDiff">
+              <option>Easy</option>
+              <option>Medium</option>
+              <option>Hard</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row-4">
+          <div class="form-group">
+            <label class="form-label">Calories</label>
+            <input class="form-input" id="postCals" type="number" placeholder="320" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Protein (g)</label>
+            <input class="form-input" id="postProtein" type="number" placeholder="18" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Carbs (g)</label>
+            <input class="form-input" id="postCarbs" type="number" placeholder="40" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fat (g)</label>
+            <input class="form-input" id="postFat" type="number" placeholder="12" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ingredients * <small>(one per line)</small></label>
+          <textarea class="form-textarea" id="postIngredients"
+            placeholder="2 cups rolled oats&#10;1 ripe banana&#10;1 tbsp honey&#10;..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cooking Steps * <small>(one per line)</small></label>
+          <textarea class="form-textarea" id="postSteps"
+            placeholder="Preheat oven to 375°F&#10;Mix all dry ingredients&#10;..."></textarea>
+        </div>
+        <button class="btn-submit" onclick="submitRecipe()">🚀 Publish Recipe</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ PLANNER PAGE ═══════════════════════════ -->
+  <div class="page" id="page-planner">
+    <div class="planner-wrap">
+      <div class="planner-header">
+        <div>
+          <h1>📅 Weekly Meal Planner</h1>
+          <p>Plan your meals for the entire week. Click any slot to add a recipe.</p>
+        </div>
+        <div class="planner-actions">
+          <button class="btn-outline" onclick="clearPlanner()">🗑️ Clear All</button>
+          <button class="btn-fill" onclick="printPlanner()">🖨️ Print Plan</button>
+        </div>
+      </div>
+      <div class="week-grid" id="weekGrid"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ PROFILE PAGE ═══════════════════════════ -->
+  <div class="page" id="page-profile">
+    <div class="profile-wrap">
+      <div class="profile-hero" id="profileHero"></div>
+      <div class="profile-tabs">
+        <button class="ptab active" onclick="switchTab('myrecipes',this)">My Recipes</button>
+        <button class="ptab" onclick="switchTab('saved',this)">Saved</button>
+        <button class="ptab" onclick="switchTab('liked',this)">Liked</button>
+      </div>
+      <div id="ptab-myrecipes" class="ptab-content">
+        <div class="recipe-grid" id="myRecGrid"></div>
+      </div>
+      <div id="ptab-saved" class="ptab-content hidden">
+        <div class="recipe-grid" id="savedGrid"></div>
+      </div>
+      <div id="ptab-liked" class="ptab-content hidden">
+        <div class="recipe-grid" id="likedGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ ADMIN PAGE ═══════════════════════════ -->
+<div class="page" id="page-admin">
+  <div class="section" style="max-width:900px;margin:0 auto">
+    <div class="section-head">
+      <h2 class="section-title">Owner Admin Dashboard</h2>
+      <p class="section-sub">Overview of registered users and their details</p>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;text-align:left;border-collapse:collapse;margin-top:20px;box-shadow:0 4px 6px rgba(0,0,0,0.05);border-radius:8px;overflow:hidden;background:white">
+        <thead>
+          <tr style="background:var(--sage);color:white">
+            <th style="padding:15px">ID</th>
+            <th style="padding:15px">Name</th>
+            <th style="padding:15px">Email</th>
+            <th style="padding:15px">Password</th>
+            <th style="padding:15px">Joined Date</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODALS ═══════════════════════════ -->
+
+  <!-- LOGIN -->
+  <div class="modal-overlay" id="loginModal" onclick="overlayClose(event,'loginModal')">
+    <div class="modal">
+      <button class="modal-x" onclick="closeModal('loginModal')">✕</button>
+      <div class="modal-icon">👋</div>
+      <h2>Welcome Back</h2>
+      <p class="modal-sub">Sign in to unlock all features</p>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="loginEmail"
+          type="email" placeholder="you@email.com" /></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="loginPass"
+          type="password" placeholder="••••••••" /></div>
+      <button class="btn-submit" onclick="doLogin()">Login</button>
+      <p class="modal-switch">No account? <a onclick="switchModal('loginModal','registerModal')">Sign up free</a></p>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="modal-overlay" id="registerModal" onclick="overlayClose(event,'registerModal')">
+    <div class="modal">
+      <button class="modal-x" onclick="closeModal('registerModal')">✕</button>
+      <div class="modal-icon">🌿</div>
+      <h2>Join NutriDish</h2>
+      <p class="modal-sub">Create your free account today</p>
+      <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="regName"
+          placeholder="Your name" /></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="regEmail"
+          type="email" placeholder="you@email.com" /></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="regPass"
+          type="password" placeholder="Min. 6 characters" /></div>
+      <button class="btn-submit" onclick="doRegister()">Create Account</button>
+      <p class="modal-switch">Have an account? <a onclick="switchModal('registerModal','loginModal')">Login</a></p>
+    </div>
+  </div>
+
+  <!-- PLANNER PICKER -->
+  <div class="modal-overlay" id="plannerModal" onclick="overlayClose(event,'plannerModal')">
+    <div class="modal modal-lg">
+      <button class="modal-x" onclick="closeModal('plannerModal')">✕</button>
+      <h2>Add to Planner</h2>
+      <p class="modal-sub" id="plannerSubText"></p>
+      <input class="form-input" style="margin-bottom:1rem" placeholder="Search recipes..."
+        oninput="filterPlannerList(this.value)" />
+      <div class="planner-recipe-list" id="plannerList"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
