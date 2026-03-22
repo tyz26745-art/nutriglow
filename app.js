@@ -638,7 +638,7 @@ function printPlanner() {
    ADMIN DASHBOARD
 ════════════════════════════════════════════════ */
 function renderAdminPage() {
-  if (!currentUser || currentUser.email !== 'admin@nutriglow.com') {
+  if (!currentUser || currentUser.email !== 'tapansahoo4496@gmail.com') {
     document.getElementById('adminTableBody').innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:red;font-weight:bold">Access Denied. Owner only.</td></tr>';
     return;
   }
@@ -772,7 +772,7 @@ function updateNavAuth() {
   const el = document.getElementById('navAuth');
   const adminBtn = document.getElementById('navAdminBtn');
   if (currentUser) {
-    if (adminBtn) adminBtn.style.display = (currentUser.email === 'admin@nutriglow.com') ? 'inline-block' : 'none';
+    if (adminBtn) adminBtn.style.display = (currentUser.email === 'tapansahoo4496@gmail.com') ? 'inline-block' : 'none';
     el.innerHTML = `
       <span style="font-size:.84rem;font-weight:600;color:var(--forest)">👤 ${currentUser.name.split(' ')[0]}</span>
       <button class="btn-outline" onclick="doLogout()">Logout</button>`;
