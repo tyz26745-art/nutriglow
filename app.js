@@ -708,9 +708,9 @@ function switchTab(id, btn) {
 /* ════════════════════════════════════════════════
    AUTH & API CONFIG
 ════════════════════════════════════════════════ */
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') 
   ? 'http://localhost:8080/api' 
-  : 'https://nutriglow-production.up.railway.app/api'; // Replace with your actual Railway URL
+  : '/api'; // Routes seamlessly through Vercel's internal backend proxy
 
 function doRegister() {
   const name = document.getElementById('regName').value.trim();
